@@ -4,13 +4,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.typekit.net/ouw5wwa.css">
 </head>
 
 <style>
     body {
         text-align: center;
         background-color: #f1f7fa;
+        font-family: mendl-sans-dawn,sans-serif;
+        font-weight: 300;
+        font-style: normal; 
     } 
+
     table {
         margin: auto;
         width: 700px;
@@ -39,9 +44,9 @@
         border-style: solid;
         border-color: #8ebee6 #ccc;
     }
-
+   
     .section {
-        margin-top: 2.5em;
+        margin: 2em auto;
     }
 
     .past table thead th {
@@ -83,25 +88,58 @@
     }
 
     .center-screen {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-right: -50%;
-        transform: translate(-50%, -50%);
+        position: absolute; 
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    input:not(#btn) {
+        border: none;
+        border-radius: 0;
+        background: transparent;
+        border-bottom: 1px solid black;
+        height: 20px;
+    }
+
+    #btn {
+        color: white;
+        border: 1px solid black;
+        background-color: black;
+        padding: 0.5em 1em;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: block;
+        margin: 1em auto 0;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    #btn:hover {
+        background-color: transparent;
+        color: black;
+        cursor: pointer;
+    }
+
+    .deleteBtn .fa {
+        transition: color 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .deleteBtn .fa:hover {
+        color: rgb(136, 0, 0);
+        cursor: pointer;
     }
 </style>
 
 <body> 
     <div class="center-screen">
-        <h2>Todo List</h2>
-        <form method="post" action="/">
+        <h1>TODOS</h1>
+        <form>
             <input type="date" name="todo[date]">
             <input type="text" name="todo[message]">
-            <input type="submit" value="Submit">
+            <input id="btn" type="submit" value="Submit">
         </form>
 
        <div class="section">
-        <h3>All TODOS:</h3>
+        <h3>All To Dos:</h3>
         <table>
             <thead>
                 <tr>
@@ -121,7 +159,7 @@
        </div>
 
        <div class="section past">
-        <h3>Past TODOS:</h3>
+        <h3>Past To Dos:</h3>
         <table>
             <thead>
                 <tr>
@@ -141,32 +179,33 @@
 </body>
 </html>
 
-<script>
-    if ($("input[name='todo[message]']").val().length != 0 && $("input[name='todo[date]']").val().length != 0) {
-        $("#btn").click(function() {            
-            fetch('/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    todo: {
-                        date: "2019/05/06",
-                        message: "Clean Home"
-                    } 
-                })
-            });
+<script> 
+
+        $("#btn").click(function() { 
+            if ($("input[name='todo[message]']").val().length != 0 && $("input[name='todo[date]']").val().length != 0) {
+                fetch('/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }, 
+                    body: JSON.stringify({
+                        todo: {
+                            date: $("input[name='todo[date]']").val(),
+                            message: $("input[name='todo[message]']").val()
+                        } 
+                    })
+                });
+                $("input[name='todo[message]']").val("");
+                $("input[name='todo[date]']").val("");
+            }
         }); 
-        $("input[name='todo[message]']").val("");
-        $("input[name='todo[date]']").val("");
-    }
+    
 
     $( "table tr .deleteBtn" ).click(function() {
         $(this).closest('tr').remove(); 
 
         let jsonObj = {"index": $(this).closest('tr').attr("id")[ $(this).closest('tr').attr("id").length-1] };
     
-        alert(JSON.stringify(jsonObj));
         $.ajax({
             url: 'http://localhost:3000', 
             method: 'PUT',
@@ -178,4 +217,4 @@
             }
         }); 
     });  
-</script> 
+</script>  

@@ -29,14 +29,10 @@ app.get('/', (req, res) => {
 
 app.put('/', (req, res) => { 
     let index = JSON.stringify(req.body);
-     
-    // fs.writeFileSync('./todos.json', newSubstring);
-
-    // let parsedJson = JSON.parse("[" + newSubstring + "]");
-    // res.render('index', { json: parsedJson });
-     
+    
     let deleted_task;
     let newTasks = [];
+    
     fs.readFile('./todos.json', 'utf8' , (err, data) => {
         if (err) {
             console.error(err)
@@ -68,9 +64,9 @@ app.put('/', (req, res) => {
         } 
         
         fs.writeFileSync('./pastTodos.json', pastTodos);
-
+    
         let pastTodosJson = JSON.parse("[" + pastTodos + "]");
-        response.render('index', { json: parseJsonNew, pastJson: pastTodosJson });
+        response.render('index', { json: parseJsonNew, pastJson: pastTodosJson });  
     });
 
     res.end(); 
