@@ -17,25 +17,64 @@ app.get('/', (req, res) => {
             console.error(err)
             return
         }
+
+        let pastTodos = fs.readFileSync('./pastTodos.json'); 
+        let parsedJsonPast = JSON.parse("[" + pastTodos + "]");
+    
         let parsedJson = JSON.parse("[" + data + "]");
-        res.render('index', { json: parsedJson }); 
+        res.render('index', { json: parsedJson, pastJson: parsedJsonPast }); 
     });
 }); 
 
 
 app.put('/', (req, res) => { 
-    let passJson = JSON.stringify(req.body);
-    let substring = passJson.substring(1);
-    let newSubstring = substring.substring(0, substring.length - 1);
+    let index = JSON.stringify(req.body);
      
-    fs.writeFileSync('./todos.json', newSubstring);
+    // fs.writeFileSync('./todos.json', newSubstring);
 
-    let parsedJson = JSON.parse("[" + newSubstring + "]");
-    res.render('index', { json: parsedJson });
-    
-    req.end();
-    res.end();
-}); 
+    // let parsedJson = JSON.parse("[" + newSubstring + "]");
+    // res.render('index', { json: parsedJson });
+     
+    let deleted_task;
+    let newTasks = [];
+    fs.readFile('./todos.json', 'utf8' , (err, data) => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        let parsedJson = JSON.parse("[" + data + "]");
+        deleted_task = parsedJson[JSON.parse(index).index];   
+
+        for (let task of parsedJson) {
+            if (task != deleted_task) {
+                newTasks.push(task);
+            }
+        }
+
+        newTasks = JSON.stringify(newTasks);
+        let substring = newTasks.substring(1);
+        let newSubstring = substring.substring(0, substring.length - 1);
+
+        let parseJsonNew = JSON.parse("[" + newSubstring + "]");
+        fs.writeFileSync('./todos.json', newSubstring);
+         
+        let pastTodos = fs.readFileSync('./pastTodos.json'); 
+
+        if (pastTodos.length != 0) {
+            pastTodos = pastTodos + "," + JSON.stringify(deleted_task);
+        } else {
+            pastTodos = JSON.stringify(deleted_task);
+            console.log(pastTodos);
+        } 
+        
+        fs.writeFileSync('./pastTodos.json', pastTodos);
+
+        let pastTodosJson = JSON.parse("[" + pastTodos + "]");
+        response.render('index', { json: parseJsonNew, pastJson: pastTodosJson });
+    });
+
+    res.end(); 
+});
 
 app.post('/', function(request, response){ 
     let data = JSON.stringify(request.body.todo);
@@ -50,9 +89,10 @@ app.post('/', function(request, response){
     
     fs.writeFileSync('./todos.json', rawdata);
 
+    let pastTodos = fs.readFileSync('./pastTodos.json'); 
     let parsedJson = JSON.parse("[" + rawdata + "]");
-    response.render('index', { json: parsedJson });
-
-    request.end();
+    let parsedJsonPast = JSON.parse("[" + pastTodos + "]");
+ 
+    response.render('index', { json: parsedJson, pastJson: parsedJsonPast });  
     response.end();
-});  
+}); 

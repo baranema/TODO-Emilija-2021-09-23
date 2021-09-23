@@ -25,7 +25,7 @@
         font-size: large;
     }
 
-    table thead th#thDay {
+    table thead th {
         width: 40%;	
     }
 
@@ -38,6 +38,28 @@
         border-width: 1px;
         border-style: solid;
         border-color: #8ebee6 #ccc;
+    }
+
+    .section {
+        margin-top: 2.5em;
+    }
+
+    .past table thead th {
+        padding: 8px;
+        background-color: #dfdfdf;
+        font-size: large;
+    }
+
+    .past table th, .past table td {
+        padding: 3px;
+        border-width: 1px;
+        border-style: solid;
+        border-color: #adadad #ccc;
+    }
+
+    .past  
+    table tr:nth-child(even) {
+        background-color: #ececec;
     }
 
     table td {
@@ -78,7 +100,8 @@
             <input type="submit" value="Submit">
         </form>
 
-        <p>All TODOS:</p>
+       <div class="section">
+        <h3>All TODOS:</h3>
         <table>
             <thead>
                 <tr>
@@ -90,62 +113,69 @@
             <% for(var i=0; i < json.length; i++) { %>
             <tr id='task_<%=i %>'>
                 <td class='todo date'><%= json[i].date %></td>
-                <td class='todo message'><%= json[i].message %></td class='todo'>
+                <td class='todo message'><%= json[i].message %></td>
                 <td class='deleteBtn'><i class="fa fa-trash" aria-hidden="true"></i></td>
             </tr>
             <% } %>
         </table> 
+       </div>
+
+       <div class="section past">
+        <h3>Past TODOS:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Task To Do</th> 
+                </tr>
+            </thead>
+            <% for(var i=0; i < pastJson.length; i++) { %>
+            <tr>
+                <td><%= pastJson[i].date %></td>
+                <td ><%= pastJson[i].message %></td>
+            </tr>
+            <% } %>
+        </table> 
+       </div>
     </div>
 </body>
 </html>
 
 <script>
-    $("#btn").click(function() {   
-        fetch('/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                todo: {
-                    date: "2019/05/06",
-                    message: "Clean Home"
-                } 
-            })
-        });
-    }); 
+    if ($("input[name='todo[message]']").val().length != 0 && $("input[name='todo[date]']").val().length != 0) {
+        $("#btn").click(function() {            
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    todo: {
+                        date: "2019/05/06",
+                        message: "Clean Home"
+                    } 
+                })
+            });
+        }); 
+        $("input[name='todo[message]']").val("");
+        $("input[name='todo[date]']").val("");
+    }
 
     $( "table tr .deleteBtn" ).click(function() {
-        $(this).closest('tr').remove();
+        $(this).closest('tr').remove(); 
 
-        let jsonNewVal = "";
-        $('table tr').get().map(function(row) {
-            let cell_val = $(row).find('td.todo').get().map(function(cell) {
-                if ($(cell).hasClass("message")) {
-                    return '"message": "' + $(cell).html() + '"}';
-                } else {
-                    return '{"date": "' + $(cell).html() + '"';
-                }
-            });
-
-            if (cell_val.length != 0) {
-                jsonNewVal += cell_val + ", ";
-            }
-        });
-
-        newJson = jsonNewVal.substring(0, jsonNewVal.length - 2);
+        let jsonObj = {"index": $(this).closest('tr').attr("id")[ $(this).closest('tr').attr("id").length-1] };
     
-        newJson = "[" + newJson + "]";
-        newJson = JSON.parse(newJson);
- 
+        alert(JSON.stringify(jsonObj));
         $.ajax({
             url: 'http://localhost:3000', 
             method: 'PUT',
             contentType: 'application/json',
-            data: JSON.stringify(newJson),
+            data: JSON.stringify(jsonObj
+            ),
             success: function(response) {
                 console.log(response);
             }
         }); 
-    });
-</script>
+    });  
+</script> 
