@@ -10,7 +10,7 @@
     body {
         text-align: center;
         background-color: #f1f7fa;
-    }
+    } 
     table {
         margin: auto;
         width: 700px;
@@ -89,8 +89,8 @@
             </thead>
             <% for(var i=0; i < json.length; i++) { %>
             <tr id='task_<%=i %>'>
-                <td><%= json[i].date %></td>
-                <td><%= json[i].message %></td>
+                <td class='todo date'><%= json[i].date %></td>
+                <td class='todo message'><%= json[i].message %></td class='todo'>
                 <td class='deleteBtn'><i class="fa fa-trash" aria-hidden="true"></i></td>
             </tr>
             <% } %>
@@ -113,11 +113,39 @@
                 } 
             })
         });
-        location.reload();
     }); 
 
     $( "table tr .deleteBtn" ).click(function() {
-        alert($(this).closest('tr').attr('id')[$(this).closest('tr').attr('id').length - 1]);
         $(this).closest('tr').remove();
+
+        let jsonNewVal = "";
+        $('table tr').get().map(function(row) {
+            let cell_val = $(row).find('td.todo').get().map(function(cell) {
+                if ($(cell).hasClass("message")) {
+                    return '"message": "' + $(cell).html() + '"}';
+                } else {
+                    return '{"date": "' + $(cell).html() + '"';
+                }
+            });
+
+            if (cell_val.length != 0) {
+                jsonNewVal += cell_val + ", ";
+            }
+        });
+
+        newJson = jsonNewVal.substring(0, jsonNewVal.length - 2);
+    
+        newJson = "[" + newJson + "]";
+        newJson = JSON.parse(newJson);
+ 
+        $.ajax({
+            url: 'http://localhost:3000', 
+            method: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(newJson),
+            success: function(response) {
+                console.log(response);
+            }
+        }); 
     });
 </script>
