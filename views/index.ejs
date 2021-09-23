@@ -59,34 +59,43 @@
     table tr:nth-child(even) {
         background-color: #d9f0fd;
     }
+
+    .center-screen {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+    }
 </style>
 
 <body> 
+    <div class="center-screen">
+        <h2>Todo List</h2>
+        <form method="post" action="/">
+            <input type="date" name="todo[date]">
+            <input type="text" name="todo[message]">
+            <input type="submit" value="Submit">
+        </form>
 
-    <h2>Todo List</h2>
-    <form method="post" action="/">
-        <input type="date" name="todo[date]">
-        <input type="text" name="todo[message]">
-        <input type="submit" value="Submit">
-    </form>
-
-    <p>All TODOS:</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Task Todo</th>
-                <th>Delete</th>
+        <p>All TODOS:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Task Todo</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <% for(var i=0; i < json.length; i++) { %>
+            <tr id='task_<%=i %>'>
+                <td><%= json[i].date %></td>
+                <td><%= json[i].message %></td>
+                <td><i class="fa fa-trash" aria-hidden="true"></i></td>
             </tr>
-        </thead>
-        <% for(var i=0; i < json.length; i++) { %>
-           <tr id='task_<%=i %>'>
-             <td><%= json[i].date %></td>
-             <td><%= json[i].message %></td>
-             <td><i class="fa fa-trash" aria-hidden="true"></i></td>
-           </tr>
-        <% } %>
-     </table> 
+            <% } %>
+        </table> 
+    </div>
 </body>
 </html>
 
