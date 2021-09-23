@@ -13,16 +13,17 @@ app.use(express.json());
 
 app.post('/', function(request, response){ 
     let data = JSON.stringify(request.body.todo);
-    fs.writeFileSync('./todos.json', data);
 
-    fs.readFile('./todos.json', 'utf8' , (err, data) => {
-        if (err) {
-            console.error(err)
-            return
-        }
-        res.render('index', { json: data }); 
-    });
-}); 
+    let rawdata = fs.readFileSync('./todos.json'); 
+
+    if (rawdata.length != 0) {
+        rawdata = rawdata + ", " + data;
+    } else {
+        rawdata = data; 
+    }
+    
+    fs.writeFileSync('./todos.json', rawdata);
+});  
 
 app.get('/', (req, res) => {  
     fs.readFile('./todos.json', 'utf8' , (err, data) => {
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
             console.error(err)
             return
         }
-        res.render('index', { json: data }); 
+        let parsedJson = JSON.parse("[" + data + "]");
+        res.render('index', { json: parsedJson }); 
     });
 }); 
