@@ -41,11 +41,11 @@
     }
 
     table td {
-        text-align: right;
+        text-align: center;
     }
 
     table tbody th {
-        text-align: left;
+        text-align: center;
         font-weight: normal;
     }
 
@@ -84,14 +84,14 @@
                 <tr>
                     <th>Date</th>
                     <th>Task Todo</th>
-                    <th>Delete</th>
+                    <th>Mark As Done</th>
                 </tr>
             </thead>
             <% for(var i=0; i < json.length; i++) { %>
             <tr id='task_<%=i %>'>
                 <td><%= json[i].date %></td>
                 <td><%= json[i].message %></td>
-                <td><i class="fa fa-trash" aria-hidden="true"></i></td>
+                <td class='deleteBtn'><i class="fa fa-trash" aria-hidden="true"></i></td>
             </tr>
             <% } %>
         </table> 
@@ -115,4 +115,9 @@
         });
         location.reload();
     }); 
+
+    $( "table tr .deleteBtn" ).click(function() {
+        alert($(this).closest('tr').attr('id')[$(this).closest('tr').attr('id').length - 1]);
+        $(this).closest('tr').remove();
+    });
 </script>

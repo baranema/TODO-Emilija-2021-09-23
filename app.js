@@ -23,6 +23,9 @@ app.post('/', function(request, response){
     }
     
     fs.writeFileSync('./todos.json', rawdata);
+
+    let parsedJson = JSON.parse("[" + rawdata + "]");
+    response.render('index', { json: parsedJson });
 });  
 
 app.get('/', (req, res) => {  
