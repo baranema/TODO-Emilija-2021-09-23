@@ -1,0 +1,109 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<style>
+    body {
+        text-align: center;
+        background-color: #f1f7fa;
+    }
+    table {
+        margin: auto;
+        width: 700px;
+        border-collapse: collapse;
+        border: 1px solid #fff;
+        border-style: hidden;
+    }
+
+    table thead th {
+        padding: 8px;
+        background-color: #d9f0fd;
+        font-size: large;
+    }
+
+    table thead th#thDay {
+        width: 40%;	
+    }
+
+    table thead th#thRegular, table thead th, table thead th {
+        width: 20%;
+    }
+
+    table th, table td {
+        padding: 3px;
+        border-width: 1px;
+        border-style: solid;
+        border-color: #8ebee6 #ccc;
+    }
+
+    table td {
+        text-align: right;
+    }
+
+    table tbody th {
+        text-align: left;
+        font-weight: normal;
+    }
+
+    table tfoot {
+        font-weight: bold;
+        font-size: large;
+        background-color: #687886;
+        color: #fff;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #d9f0fd;
+    }
+</style>
+
+<body> 
+
+    <h2>Todo List</h2>
+    <form method="post" action="/">
+        <input type="date" name="todo[date]">
+        <input type="text" name="todo[message]">
+        <input type="submit" value="Submit">
+    </form>
+
+    <p>All TODOS:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Task Todo</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <% for(var i=0; i < json.length; i++) { %>
+           <tr id='task_<%=i %>'>
+             <td><%= json[i].date %></td>
+             <td><%= json[i].message %></td>
+             <td><i class="fa fa-trash" aria-hidden="true"></i></td>
+           </tr>
+        <% } %>
+     </table> 
+</body>
+</html>
+
+<script>
+    $("#btn").click(function() {   
+        fetch('/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                todo: {
+                    date: "2019/05/06",
+                    message: "Clean Home"
+                } 
+            })
+        });
+        location.reload();
+    }); 
+</script>
